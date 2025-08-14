@@ -1,0 +1,8 @@
+{
+  "name": "eva-monorepo",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "packages/nodes/*"
+  ]
+}

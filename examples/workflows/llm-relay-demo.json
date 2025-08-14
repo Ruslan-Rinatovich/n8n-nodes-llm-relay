@@ -1,0 +1,70 @@
+{
+  "name": "LLM Relay Demo",
+  "nodes": [
+    {
+      "id": "1",
+      "name": "Set",
+      "type": "n8n-nodes-base.set",
+      "position": [0, 0],
+      "parameters": {
+        "values": {
+          "string": [
+            { "name": "userText", "value": "Hello world" },
+            { "name": "vars", "value": "{\"topic\":\"demo\"}" }
+          ]
+        }
+      }
+    },
+    {
+      "id": "2",
+      "name": "LLM Relay Tool",
+      "type": "n8n-nodes-llm-relay.llmRelay",
+      "position": [300, 0],
+      "parameters": {
+        "upstream": {
+          "provider": "openai",
+          "model": "gpt-4o-mini",
+          "systemPrompt": "You are a helpful assistant",
+          "userTemplate": "{{userText}}",
+          "temperature": 0.7,
+          "maxTokens": 500,
+          "timeoutMs": 60000
+        },
+        "downstream": {
+          "provider": "deepseekCompat",
+          "baseURL": "https://api.deepseek.com",
+          "model": "deepseek-chat",
+          "temperature": 0.7,
+          "maxTokens": 500,
+          "timeoutMs": 60000
+        },
+        "routing": {
+          "mode": "always",
+          "threshold": 0,
+          "scoreRegex": "score\\s*[:=]\\s*(\\d+(?:\\.\\d+)?)"
+        },
+        "output": {
+          "wantRawProviderResponses": false,
+          "emitOnlyDownstreamText": false
+        }
+      }
+    },
+    {
+      "id": "3",
+      "name": "Function",
+      "type": "n8n-nodes-base.function",
+      "position": [600, 0],
+      "parameters": {
+        "functionCode": "return [{json: {text: $json.data.downstream.response.text}}];"
+      }
+    }
+  ],
+  "connections": {
+    "Set": {
+      "main": [ [ { "node": "LLM Relay Tool", "type": "main", "index": 0 } ] ]
+    },
+    "LLM Relay Tool": {
+      "main": [ [ { "node": "Function", "type": "main", "index": 0 } ] ]
+    }
+  }
+}
