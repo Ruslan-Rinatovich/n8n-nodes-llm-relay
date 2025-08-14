@@ -1,8 +1,13 @@
 {
-  "name": "eva-monorepo",
-  "private": true,
-  "workspaces": [
-    "packages/*",
-    "packages/nodes/*"
-  ]
+  "name": "n8n-nodes-llm-relay",
+  "version": "0.1.0",
+  "description": "LLM Relay Tool node for n8n",
+  "keywords": ["n8n-community-node-package"],
+  "license": "MIT",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "prepare": "npm run build"
+  }
 }
